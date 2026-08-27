@@ -38,8 +38,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    "rest_framework",
+
     "clinic_service",
-    "specializations-service",
+    "specializations_service",
 
 ]
 

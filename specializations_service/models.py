@@ -1,4 +1,5 @@
 from django.db import models
+from slugify import slugify
 
 
 class Specialization(models.Model):
@@ -10,7 +11,7 @@ class Specialization(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         if not self.code:
             self.code = slugify(self.name, allow_unicode=True)
 
