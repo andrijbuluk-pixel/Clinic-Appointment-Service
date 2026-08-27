@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     "clinic_service",
     "specializations_service",
+    "doctors_and_slots_service",
 
 ]
 
