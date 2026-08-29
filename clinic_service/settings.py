@@ -46,6 +46,9 @@ INSTALLED_APPS = [
     "clinic_service",
     "specializations_service",
     "doctors_and_slots_service",
+    "appointment",
+    "payment",
+    "user"
 
 ]
 
@@ -135,3 +138,5 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
+
+AUTH_USER_MODEL = "user.User"
