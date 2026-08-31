@@ -1,5 +1,5 @@
 from django.db import models
-from slugify import slugify
+from django.utils.text import slugify
 
 
 class Specialization(models.Model):
