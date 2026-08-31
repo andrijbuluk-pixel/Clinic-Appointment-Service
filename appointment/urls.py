@@ -8,7 +8,7 @@ app_name = 'appointment'
 
 router = DefaultRouter()
 
-router.register("", AppointmentView, basename='appointment')
+router.register(r"", AppointmentView, basename='appointment')
 
 urlpatterns = [
     path('', include(router.urls)),

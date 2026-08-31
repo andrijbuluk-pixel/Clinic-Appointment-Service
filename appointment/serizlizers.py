@@ -8,12 +8,12 @@ class AppointmentSerializer(serializers.ModelSerializer):
         model = Appointment
         fields = (
             "id",
-            "doctor_slot_id",
-            "patient_id",
+            "doctor_slot",
+            "patient",
             "status",
             "booked_at",
             "completed_at",
             "price"
         )
 
-        read_only_fields = ("id",)
+        read_only_fields = ("id", "completed_at")
