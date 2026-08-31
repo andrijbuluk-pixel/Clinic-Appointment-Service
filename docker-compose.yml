@@ -1,0 +1,41 @@
+services:
+  redis:
+    image: redis:latest
+    container_name: rd01
+    restart: always
+    ports:
+      - "6379:6379"
+
+  webapp:
+    build: .
+    container_name: wb01
+    volumes:
+      - .:/webapp
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+
+  celery-worker:
+    build: .
+    container_name: cl01
+    volumes:
+      - .:/webapp
+    command: celery -A Social_media_API worker -l info
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+
+  celery-beat:
+    build: .
+    command: celery -A clinic_service beat -l info
+    volumes:
+      - .:/webapp
+    depends_on:
+      - redis
