@@ -12,7 +12,7 @@ class Payment(models.Model):
     class Type(models.TextChoices):
         CONSULTATION = "CONSULTATION", "Consulation"
         CANCELLATION_FEE = "CANCELLATION_FEE", "Cancellation_fee"
-        NO_SHOW_FEE = "NO_SHOW_FEE", "no_show_fee"
+        NO_SHOW_FEE = "NO_SHOW_FEE", "No_show_fee"
 
 
     status = models.CharField(choices=Status.choices, default=Status.PENDING, max_length=50)

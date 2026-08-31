@@ -15,5 +15,5 @@ class Doctor(models.Model):
 
 class DoctorSlot(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    start = models.DateTimeField ()
-    end = models.DateTimeField ()
+    start = models.DateTimeField()
+    end = models.DateTimeField()
