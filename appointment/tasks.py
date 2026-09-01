@@ -1,3 +1,6 @@
+import os
+import requests
+
 from django.utils import timezone
 from celery import shared_task
 from appointment.models import Appointment
@@ -15,9 +18,28 @@ def auto_mark_no_show_appointments():
         appointment.status = "NO_SHOW"
         appointment.completed_at = timezone.now()
         appointment.save()
+
+        massage_tl = (
+            f"{appointment.doctor_slot.doctor.first_name} - {appointment.doctor_slot.doctor.last_name}\n"
+            f"This appointment #{appointment.id} has been <No show>"
+        )
+        auto_message_appointments.delay(massage_tl)
+
         Payment.objects.create(
             status=Payment.Status.PENDING,
             type=Payment.Type.NO_SHOW_FEE,
             appointment=appointment,
             money_to_pay=300
         )
+
+
+@shared_task
+def auto_message_appointments(message: str) -> None:
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    data = {"chat_id": chat_id, "text": message}
+
+    response = requests.post(url, data=data)
+    print(response.json())

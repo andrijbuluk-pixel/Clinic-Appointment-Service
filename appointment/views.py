@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from appointment.models import Appointment
 from payment.models import Payment
 from appointment.serizlizers import AppointmentSerializer
+from appointment.tasks import auto_message_appointments
 
 class AppointmentView(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
@@ -22,6 +23,16 @@ class AppointmentView(viewsets.ModelViewSet):
         "doctor_slot__doctor",
         "doctor_slot"
     ]
+
+    def perform_create(self, serializer):
+        appointment = serializer.save()
+        massage_tl = (
+            f"New booking!\n"
+            f"Doctor: {appointment.doctor_slot.doctor.first_name} - {appointment.doctor_slot.doctor.last_name}\n"
+            f"Appointment: #{appointment.id} is <BOOKED>\n"
+            f"Beginning : {appointment.doctor_slot.start}\n"
+        )
+        auto_message_appointments.delay(massage_tl)
 
     @action(methods=["post"], detail=True)
     def cancel(self, request, pk=None):
@@ -38,6 +49,13 @@ class AppointmentView(viewsets.ModelViewSet):
         appointment.completed_at = timezone.now()
         appointment.status = "Canceled"
         appointment.save()
+
+        massage_tl = (
+            f"{appointment.doctor_slot.doctor.first_name} - {appointment.doctor_slot.doctor.last_name}\n"
+            f"This appointment #{appointment.id} has been <Canceled>"
+        )
+        auto_message_appointments.delay(massage_tl)
+
         return Response(f"Appointment {pk} has been <Canceled>", status=status.HTTP_202_ACCEPTED)
 
     @action(methods=["post"], detail=True)
@@ -46,6 +64,13 @@ class AppointmentView(viewsets.ModelViewSet):
         appointment.status = "Completed"
         appointment.completed_at = timezone.now()
         appointment.save()
+
+        massage_tl = (
+            f"{appointment.doctor_slot.doctor.first_name} - {appointment.doctor_slot.doctor.last_name}\n"
+            f"This appointment #{appointment.id} has been <Completed>"
+        )
+        auto_message_appointments.delay(massage_tl)
+
         return Response(f"Appointment {pk} has been <Completed>", status=status.HTTP_202_ACCEPTED)
 
     @action(methods=["post"], detail=True)
@@ -66,4 +91,11 @@ class AppointmentView(viewsets.ModelViewSet):
         appointment.completed_at = timezone.now()
         appointment.status = "NO_SHOW"
         appointment.save()
+
+        massage_tl = (
+            f"{appointment.doctor_slot.doctor.first_name} - {appointment.doctor_slot.doctor.last_name}\n"
+            f"This appointment #{appointment.id} has been <No show>"
+        )
+        auto_message_appointments.delay(massage_tl)
+
         return Response(f"Appointment {pk} has been <No show>", status=status.HTTP_202_ACCEPTED)
