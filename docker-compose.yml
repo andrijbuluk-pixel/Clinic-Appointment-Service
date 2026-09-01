@@ -25,7 +25,7 @@ services:
     container_name: cl01
     volumes:
       - .:/webapp
-    command: celery -A Social_media_API worker -l info
+    command: celery -A clinic_service worker -l info
     environment:
       - CELERY_BROKER_URL=redis://redis:6379/0
       - CELERY_RESULT_BACKEND=redis://redis:6379/0

@@ -15,6 +15,8 @@ from pathlib import Path
 from datetime import timedelta
 from dotenv import load_dotenv
 
+from clinic_service.celery import app
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -161,3 +163,10 @@ AUTH_USER_MODEL = "user.User"
 
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
+
+app.conf.beat_schedule = {
+    "mark-no-shows-every-minute": {
+        "task": "appointment.tasks.auto_mark_no_show_appointments",
+        "schedule": 60.0,  # запускати кожні 60 секунд
+    },
+}

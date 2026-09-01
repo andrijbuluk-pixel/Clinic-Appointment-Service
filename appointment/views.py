@@ -35,6 +35,7 @@ class AppointmentView(viewsets.ModelViewSet):
                 money_to_pay=300
             )
 
+        appointment.completed_at = timezone.now()
         appointment.status = "Canceled"
         appointment.save()
         return Response(f"Appointment {pk} has been <Canceled>", status=status.HTTP_202_ACCEPTED)
@@ -62,7 +63,7 @@ class AppointmentView(viewsets.ModelViewSet):
                 appointment=appointment,
                 money_to_pay=300
             )
-
-        appointment.status = "No show"
+        appointment.completed_at = timezone.now()
+        appointment.status = "NO_SHOW"
         appointment.save()
         return Response(f"Appointment {pk} has been <No show>", status=status.HTTP_202_ACCEPTED)
