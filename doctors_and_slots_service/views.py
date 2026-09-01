@@ -1,6 +1,8 @@
 from rest_framework import viewsets, generics, status, mixins
 from rest_framework.response import Response
 from datetime import datetime, timedelta
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema
 
 from doctors_and_slots_service.models import Doctor, DoctorSlot
 from doctors_and_slots_service.serializers import DoctorSerializer, DoctorSlotSerializer
@@ -12,9 +14,48 @@ class DoctorViewSet(viewsets.ModelViewSet):
     filterset_fields = ["id", "specializations"]
 
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(
+            name="from",
+            required=False,
+            type=OpenApiTypes.DATETIME,
+        ),
+        OpenApiParameter(
+            name="to",
+            required=False,
+            type=OpenApiTypes.DATETIME,
+        ),
+        OpenApiParameter(
+            name="available_only",
+            required=False,
+            type=OpenApiTypes.BOOL,
+        )
+    ]
+)
 class DoctorSlotsCreateAPIView(generics.ListCreateAPIView, mixins.DestroyModelMixin):
     queryset = DoctorSlot.objects.all()
     serializer_class = DoctorSlotSerializer
+
+    def get_queryset(self):
+        doctor_id = self.kwargs.get("pk")
+        queryset = DoctorSlot.objects.filter(doctor_id=doctor_id)
+
+        from_dt = self.request.query_params.get("from")
+        to_dt = self.request.query_params.get("to")
+        availability = self.request.query_params.get("available_only")
+
+        if from_dt:
+            queryset = queryset.filter(start__gte=from_dt)
+
+        if to_dt:
+            queryset = queryset.filter(end__lte=to_dt)
+
+        if str(availability).lower() == "true":
+            queryset = queryset.exclude(appointment__status="BOOKED")
+
+        return queryset
+
 
     def create(self, request, *args, **kwargs):
         slots_list = []
