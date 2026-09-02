@@ -11,6 +11,8 @@ from appointment.models import Appointment
 from payment.models import Payment
 from appointment.serizlizers import AppointmentSerializer
 from appointment.tasks import auto_message_appointments
+from payment.stripe_helper import create_stripe_session
+
 
 class AppointmentView(viewsets.ModelViewSet):
     queryset = Appointment.objects.all()
@@ -39,10 +41,14 @@ class AppointmentView(viewsets.ModelViewSet):
         appointment = self.get_object()
 
         if appointment.doctor_slot.start - timedelta(hours=12) < timezone.now():
+            session = create_stripe_session(request, 300, "Cancellation Fee")
+
             Payment.objects.create(
                 status=Payment.Status.PENDING,
                 type=Payment.Type.CANCELLATION_FEE,
                 appointment=appointment,
+                session_id=session.id,
+                session_url=session.url,
                 money_to_pay=300
             )
 
@@ -82,10 +88,14 @@ class AppointmentView(viewsets.ModelViewSet):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         if appointment.doctor_slot.start + timedelta(minutes=40) < timezone.now() and appointment.status == "Booked":
+            session = create_stripe_session(request, 300, "No Show")
+
             Payment.objects.create(
                 status=Payment.Status.PENDING,
                 type=Payment.Type.CANCELLATION_FEE,
                 appointment=appointment,
+                session_id=session.id,
+                session_url=session.url,
                 money_to_pay=300
             )
         appointment.completed_at = timezone.now()

@@ -5,6 +5,7 @@ from django.utils import timezone
 from celery import shared_task
 from appointment.models import Appointment
 from payment.models import Payment
+from payment.stripe_helper import create_stripe_session
 
 
 @shared_task
@@ -25,10 +26,18 @@ def auto_mark_no_show_appointments():
         )
         auto_message_appointments.delay(massage_tl)
 
+        session = create_stripe_session(
+            request=None,
+            money_to_pay=300,
+            service_name=f"No-show fee for appointment #{appointment.id}"
+        )
+
         Payment.objects.create(
             status=Payment.Status.PENDING,
             type=Payment.Type.NO_SHOW_FEE,
             appointment=appointment,
+            session_id=session.id,
+            session_url=session.url,
             money_to_pay=300
         )
 

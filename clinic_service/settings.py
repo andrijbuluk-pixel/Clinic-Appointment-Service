@@ -35,6 +35,8 @@ DEBUG = os.getenv("DEBUG") == "True"
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 
+STRIPE_API_KEY = os.getenv("STRIPE_SECRET_KEY")
+
 ALLOWED_HOSTS = []
 
 # Application definition
