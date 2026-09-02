@@ -1,7 +1,7 @@
 from datetime import timedelta
 from django.utils import timezone
 
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, mixins
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
@@ -12,11 +12,17 @@ from payment.models import Payment
 from appointment.serizlizers import AppointmentSerializer
 from appointment.tasks import auto_message_appointments
 from payment.stripe_helper import create_stripe_session
+from clinic_service.permissions import IsOwnerOrAdmin
 
 
-class AppointmentView(viewsets.ModelViewSet):
+class AppointmentView(mixins.CreateModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
+
     queryset = Appointment.objects.all()
     serializer_class = AppointmentSerializer
+    permission_classes = [IsOwnerOrAdmin]
 
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = [
@@ -25,6 +31,11 @@ class AppointmentView(viewsets.ModelViewSet):
         "doctor_slot__doctor",
         "doctor_slot"
     ]
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Appointment.objects.all()
+        return Appointment.objects.filter(patient=self.request.user)
 
     def perform_create(self, serializer):
         appointment = serializer.save()

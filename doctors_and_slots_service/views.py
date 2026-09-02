@@ -6,12 +6,14 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema
 
 from doctors_and_slots_service.models import Doctor, DoctorSlot
 from doctors_and_slots_service.serializers import DoctorSerializer, DoctorSlotSerializer
+from clinic_service.permissions import IsAdminOrReadOnly
 
 
 class DoctorViewSet(viewsets.ModelViewSet):
     serializer_class = DoctorSerializer
     queryset = Doctor.objects.all()
     filterset_fields = ["id", "specializations"]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 @extend_schema(
@@ -36,6 +38,7 @@ class DoctorViewSet(viewsets.ModelViewSet):
 class DoctorSlotsCreateAPIView(generics.ListCreateAPIView, mixins.DestroyModelMixin):
     queryset = DoctorSlot.objects.all()
     serializer_class = DoctorSlotSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
     def get_queryset(self):
         doctor_id = self.kwargs.get("pk")

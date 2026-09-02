@@ -8,11 +8,13 @@ from rest_framework.response import Response
 from appointment.tasks import auto_message_appointments
 from payment.models import Payment
 from payment.serializers import PaymentSerializer
+from clinic_service.permissions import IsOwnerOrAdmin
 
 
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+    permission_classes = [IsOwnerOrAdmin]
 
     @action(detail=False, methods=["get"])
     def success(self, request):
