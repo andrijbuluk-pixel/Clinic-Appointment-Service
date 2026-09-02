@@ -7,7 +7,7 @@ app_name = 'payment'
 
 router = DefaultRouter()
 
-router.register('payment', PaymentViewSet, basename='payment')
+router.register('', PaymentViewSet, basename='payment')
 
 urlpatterns = [
     path('', include(router.urls)),
