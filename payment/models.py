@@ -10,7 +10,7 @@ class Payment(models.Model):
         EXPIRED = "EXPIRED", "Expired"
 
     class Type(models.TextChoices):
-        CONSULTATION = "CONSULTATION", "Consulation"
+        CONSULTATION = "CONSULTATION", "Consultation"
         CANCELLATION_FEE = "CANCELLATION_FEE", "Cancellation_fee"
         NO_SHOW_FEE = "NO_SHOW_FEE", "No_show_fee"
 
@@ -18,7 +18,7 @@ class Payment(models.Model):
     status = models.CharField(choices=Status.choices, default=Status.PENDING, max_length=50)
     type = models.CharField(choices=Type.choices, max_length=50)
     appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, related_name="payments")
-    session_url = models.CharField(blank=True, null=True, max_length=1000)
+    session_url = models.URLField(blank=True, null=True, max_length=1000)
     session_id = models.CharField(blank=True, null=True, max_length=255)
     money_to_pay = models.DecimalField(max_digits=10, decimal_places=2)
 
