@@ -15,11 +15,11 @@ from user.models import User
 
 @override_settings(CELERY_TASK_ALWAYS_EAGER=True)
 class AppointmentTest(APITestCase):
-    time_continues_1 = timezone.make_aware(datetime(2026, 9, 4, 10, 0, 0))
-    time_continues_2 = timezone.make_aware(datetime(2026, 9, 4, 10, 30, 0))
+    time_continues_1 = datetime(2026, 9, 4, 10, 0, 0)
+    time_continues_2 = datetime(2026, 9, 4, 10, 30, 0)
 
-    time_passed_1 = timezone.make_aware(datetime(2026, 9, 2, 10, 0, 0))
-    time_passed_2 = timezone.make_aware(datetime(2026, 9, 2, 10, 30, 0))
+    time_passed_1 = datetime(2026, 9, 2, 10, 0, 0)
+    time_passed_2 = datetime(2026, 9, 2, 10, 30, 0)
 
     def setUp(self):
         self.client = APIClient()
