@@ -33,7 +33,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
             if existing_appointments.exists():
                 raise serializers.ValidationError({
-                    "doctor_slot": "Цей час уже заброньовано іншим пацієнтом!"
+                    "doctor_slot": "This appointment already exists"
                 })
 
             return attrs
