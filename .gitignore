@@ -1,0 +1,9 @@
+.venv
+db.sqlite3
+.env
+**/__pycache__/
+*.pyc
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal
+.idea
