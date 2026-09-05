@@ -9,6 +9,7 @@ from appointment.tasks import auto_message_appointments
 from payment.models import Payment
 from payment.serializers import PaymentSerializer
 from clinic_service.permissions import IsOwnerOrAdmin
+from rest_framework.permissions import AllowAny
 
 
 class PaymentViewSet(viewsets.ModelViewSet):
@@ -16,7 +17,7 @@ class PaymentViewSet(viewsets.ModelViewSet):
     serializer_class = PaymentSerializer
     permission_classes = [IsOwnerOrAdmin]
 
-    @action(detail=False, methods=["get"])
+    @action(detail=False, methods=["get"], permission_classes=[AllowAny])
     def success(self, request):
         session_id = request.query_params.get("session_id")
         if not session_id:
