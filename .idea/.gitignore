@@ -1,0 +1,10 @@
+# Default ignored files
+/../../Clinic-Appointment-Service /.idea/shelf/
+/../../Clinic-Appointment-Service /.idea/workspace.xml
+# Ignored default folder with query files
+/../../Clinic-Appointment-Service /.idea/queries/
+# Datasource local storage ignored files
+/../../Clinic-Appointment-Service /.idea/dataSources/
+/../../Clinic-Appointment-Service /.idea/dataSources.local.xml
+# Editor-based HTTP Client requests
+/../../Clinic-Appointment-Service /.idea/httpRequests/
